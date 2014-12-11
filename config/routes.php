@@ -1,7 +1,7 @@
 <?php
 return [
     'default' => '/list',
-    'errors' => '/error/:code',
+    'errors' => '/error',
     'routes' => [
 		'/vote(/:action(/:id))' => [
         'controller' => '\Suggestotron\Controller\Votes',
