@@ -1,0 +1,25 @@
+From 53d3a038b81088aadfbf74414a69725c32fb7266 Mon Sep 17 00:00:00 2001
+From: ciprian-matis <ciprian.matis@artsoft-consult.ro>
+Date: Thu, 11 Dec 2014 14:39:05 +0200
+Subject: [PATCH 2/2] Second commit to local
+
+---
+ config/routes.php | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/config/routes.php b/config/routes.php
+index 355cf71..498fe8f 100644
+--- a/config/routes.php
++++ b/config/routes.php
+@@ -1,7 +1,7 @@
+ <?php
+ return [
+     'default' => '/list',
+-    'errors' => '/error/:code',
++    'errors' => '/error',
+     'routes' => [
+ 		'/vote(/:action(/:id))' => [
+         'controller' => '\Suggestotron\Controller\Votes',
+-- 
+1.9.4.msysgit.2
+
