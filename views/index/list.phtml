@@ -1,0 +1,40 @@
+<?php
+$topics = $this->topics;
+foreach ($topics as $topic) {
+    ?>
+    <section>
+        <div class="row">
+            <div class="col-xs-12">
+                <h3><?=$topic['title'];?></h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-8">
+                <p class="text-muted">
+                    <?=nl2br($topic['description']);?>
+                </p>
+            </div>
+            <div class="col-xs-4">
+                <p class="pull-right">
+				<a href="/vote/add?id=<?=$topic['id']; ?>" class="btn btn-success"><span class="glyphicon glyphicon-thumbs-up">
+				<strong><?=(isset($topic['count'])) ? $topic['count'] : 0;?></strong>
+				</span>
+				</a>
+				<a href="/vote/minus?id=<?=$topic['id']; ?>" class="btn btn-danger"><span class="glyphicon glyphicon-thumbs-down">
+				<strong><?=(isset($topic['down'])) ? $topic['down'] : 0;?></strong>
+				</span>
+				</a>
+                    <a href="/edit?id=<?=$topic['id']; ?>" class="btn btn-primary"><span class="glyphicon glyphicon-edit"></span> Edit</a>
+                    <a href="/delete?id=<?=$topic['id']; ?>" class="btn btn-danger" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="top" data-title="Are you sure?" data-content=" This cannot be undone!" onclick="return confirm('Are you sure?')">
+					<span class="glyphicon glyphicon-remove"></span> Delete</a>
+
+                </p>
+            </div>
+        </div>
+    </section>
+    <hr>
+    <?php } ?>
+
+<form class="navbar-form navbar-right" role="search">
+	<a href="/about" class="btn btn-default"><span class="glyphicon glyphicon-info-sign"></span> About</a>
+</form>

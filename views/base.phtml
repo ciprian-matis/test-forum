@@ -1,0 +1,78 @@
+<?php
+$config = \Suggestotron\Config::get('site');
+?>
+
+<!doctype html>
+<html>
+    <head>
+        <title><?=$config['title'];?></title>
+        <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+        <script type="text/javascript" src="/js/jquery-2.1.1.min.js"></script>
+        <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+		
+<script type="text/javascript">
+    $(document).ready(function() {  
+	
+		if (!$('#dialog-confirm').length) {
+            $('body').append('<div class="dialog-confirm" id="dialog-confirm"></div><div class="modal-body"></div><div class="modal-footer"></div>');
+        } 
+	
+		// $("#dialog-confirm").html(JSON.parse(data));
+			// $(".dialog-confirm").dialog({
+			// title: 'Succes',
+			// height:150,
+			// modal:true,
+			// buttons:{
+				// "OK": function() {
+				// $(this).dialog("close");
+				// }
+			// }
+		// });
+		
+		
+	$(function() {
+    		$("#divmessage").delay(3000).fadeOut(2000);
+	});			
+
+	});
+
+
+
+</script> 
+</head>
+    <body>
+
+	
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="container-fluid">
+                    <div class="navbar-header">
+                              <a class="navbar-brand" href="/">Test Suggestotron</a>
+                    </div>
+                    <form class="navbar-form navbar-right" role="search">
+                            <a href="/add" class="btn btn-default">
+                                    <span class="glyphicon glyphicon-plus-sign"></span>
+                                        Add Topic
+                            </a>
+                    </form>
+                  </div>
+        </nav>
+		
+		<?php if (isset($_GET['succes'])) {
+		echo '<div class="alert alert-info" role="alert" id="divmessage">';
+		echo 'Topic salvat / adaugat.';
+		echo '</div>';
+		}?>
+
+        <div class="container">
+            <!-- Specific Page Content Goes Here -->
+            <?php $this->content(); ?>
+        </div>
+        <script type="text/javascript">
+            $('[data-toggle="popover"]').popover();
+        </script>
+		
+					
+						
+	
+    </body>
+</html>
