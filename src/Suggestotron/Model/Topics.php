@@ -4,13 +4,19 @@ namespace Suggestotron\Model;
 class Topics {
    	
 	public function getAllTopics() {
-		$sql = "SELECT 
-					topics.*,
-					votes.count, votes.down
-				FROM topics INNER JOIN votes ON (
-					votes.topic_id = topics.id
-				)
+		$sql = "SELECT distinct topics . * , votes.count, votes.down
+				FROM topics
+				INNER JOIN votes ON votes.topic_id = topics.id
 				ORDER BY votes.count DESC, topics.title ASC";
+
+		$query = \Suggestotron\Db::getInstance()->prepare($sql);
+		$query->execute();
+		
+		return $query;
+	}
+	
+	public function getAllComments($id) {
+		$sql = "SELECT * FROM comments2 WHERE id_topic = " . $id . " ORDER BY id_comment";
 
 		$query = \Suggestotron\Db::getInstance()->prepare($sql);
 		$query->execute();
@@ -35,6 +41,12 @@ class Topics {
 		];
 
 		$query->execute($data);
+		$count = $query->rowCount();
+		
+		if ($count == 0) {
+			return $count;
+		}
+		
 
 		// Grab the newly created topic ID
 		$id = \Suggestotron\Db::getInstance()->lastInsertId();
@@ -53,7 +65,7 @@ class Topics {
 		];
 
 		$query = \Suggestotron\Db::getInstance()->prepare($sql);
-		echo json_encode($message = 'test json !');
+		// echo json_encode($message = 'test json !');
 		return $query->execute($data);
 		
 	}
@@ -107,6 +119,54 @@ class Topics {
 	   $query = \Suggestotron\Db::getInstance()->prepare($sql);
 
 	   return $query->execute($data);
+	}
+
+	public function addComment($data, $id_post_comment) {
+		
+		$query = \Suggestotron\Db::getInstance()->prepare(
+			"INSERT INTO comments2 (
+					id,
+					id_topic,
+					id_comment,
+					content,
+					author,
+					date
+			) VALUES (
+					:id,
+					:id_topic,
+					:id_comment,
+					:content,
+					:author,
+					:date
+			)"
+		);
+
+		$data = [
+			':id' 			=> NULL,
+			':id_topic'		=> $data['id_topic'],
+			':id_comment'	=> $id_post_comment,
+			':content' 		=> $data['comment'],
+			':author'		=> $data['name'],
+			':date'			=> $data['date']
+		];
+
+		$query->execute($data);
+		$count = $query->rowCount();
+		return $count;
+	}
+
+	public function getComment($id, $commentId) {
+		
+		$sql = "SELECT * FROM comments WHERE id=:id and id_comment=:id_comment";
+		$query = \Suggestotron\Db::getInstance()->prepare($sql);
+		
+		$values = [
+			':id' 			=> $id,
+			':id_comment'	=> $commentId,
+			];
+		$query->execute($values);
+		
+		return $query->fetch(\PDO::FETCH_ASSOC);
 	}
 	
 }

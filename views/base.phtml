@@ -6,37 +6,33 @@ $config = \Suggestotron\Config::get('site');
 <html>
     <head>
         <title><?=$config['title'];?></title>
+		 <script src="//code.jquery.com/jquery-1.10.2.js"></script>
         <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
         <script type="text/javascript" src="/js/jquery-2.1.1.min.js"></script>
         <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+
+<style>
+/* Gradient color1 - color2 - color1 */ 
+hr.style-one {
+	border: 0; 
+	height: 1px;
+	background: #333;
+	background-image: -webkit-linear-gradient(left, #ccc, #333, #ccc);
+	background-image: -moz-linear-gradient(left, #ccc, #333, #ccc);
+	background-image: -ms-linear-gradient(left, #ccc, #333, #ccc); 
+	background-image: -o-linear-gradient(left, #ccc, #333, #ccc); 
+	}
+</style>
 		
 <script type="text/javascript">
     $(document).ready(function() {  
 	
-		if (!$('#dialog-confirm').length) {
-            $('body').append('<div class="dialog-confirm" id="dialog-confirm"></div><div class="modal-body"></div><div class="modal-footer"></div>');
-        } 
-	
-		// $("#dialog-confirm").html(JSON.parse(data));
-			// $(".dialog-confirm").dialog({
-			// title: 'Succes',
-			// height:150,
-			// modal:true,
-			// buttons:{
-				// "OK": function() {
-				// $(this).dialog("close");
-				// }
-			// }
-		// });
-		
-		
-	$(function() {
-    		$("#divmessage").delay(3000).fadeOut(2000);
-	});			
+		$(function() {
+				$("#divmessage").delay(1000).fadeOut(1000);
+				
+		});			
 
 	});
-
-
 
 </script> 
 </head>
@@ -56,12 +52,31 @@ $config = \Suggestotron\Config::get('site');
                     </form>
                   </div>
         </nav>
-		
-		<?php if (isset($_GET['succes'])) {
-		echo '<div class="alert alert-info" role="alert" id="divmessage">';
-		echo 'Topic salvat / adaugat.';
-		echo '</div>';
-		}?>
+
+		<?php
+		if (isset($_SESSION['success'])) {
+			if ($_SESSION['success'] == 'yes') {
+			// sa se afiseze mesaj de succes
+			echo '<div class="alert alert-info" role="alert" id="divmessage">';
+			echo 'Topic salvat / adaugat.';
+			echo '</div>';		
+			
+			unset($_SESSION['success']);
+			}
+		}
+		?>
+
+		<?php 
+		if (isset($_SESSION['comment'])) {
+			if ($_SESSION['comment'] == 'yes') {
+			echo '<div class="alert alert-info" role="alert" id="divmessage">';
+			echo 'Comment saved.';
+			echo '</div>';
+			
+			unset($_SESSION['comment']);
+			}
+		}
+		?>
 
         <div class="container">
             <!-- Specific Page Content Goes Here -->
