@@ -32,14 +32,14 @@ class Topics extends \Suggestotron\Controller {
 			foreach ($comments as $comm){
 				$comm_array[] = array(
 				'id'			=> $comm['id'], 
-				'id_topic'		=> $comm['id_topic'], 
+				// 'id_topic'		=> $comm['id_topic'], 
 				'id_comment'	=> $comm['id_comment'], 
 				'content'		=> $comm['content'], 
 				'author'		=> $comm['author'], 
 				'date'			=> $comm['date']
 				);
 			}
-		
+
 			$tree = $this->buildTree($comm_array, 0);
 			$data[$i]['comments'] = $tree;
 			$i++;
@@ -52,22 +52,18 @@ class Topics extends \Suggestotron\Controller {
 	function buildTree($elements, $id) {
 		
 		$branch = array();
-				
 		foreach ($elements as $element) {
-		// echo $element['id'] . '</br>';
-			if ($element['id_comment'] == $id )  {
 
+			if ($element['id_comment'] == $id )  {
+			
 				$children = $this->buildTree($elements, $element['id']);
 				if ($children) {
 					$element['children'] = $children;
 				}
-				
 				$branch[] = $element;
-				unset($elements[key($elements)]);
 			}
-			
+			unset($elements[key($elements)]);
 		}
-	
 	return $branch;
 	}
 

@@ -13,6 +13,8 @@ if (isset($_SERVER['REQUEST_URI'])) {
 
 $router = new \Suggestotron\Router();
 $router->start($route);
+// echo '<pre>'.print_r($router, TRUE).'</pre>';
+
 
 
 ?>

@@ -22,15 +22,15 @@ class Router {
 		
 		try {
 			foreach ($this->config['routes'] as $path => $defaults) {
-			$regex = '@' . preg_replace(
-				'@:([\w]+)@',
-				'(?P<$1>[^/]+)',
-				str_replace(')', ')?', (string) $path)
-			) . '@';
-			$matches = [];
-			
-			if (preg_match($regex, $route, $matches)) {
-				$options = $defaults;
+				$regex = '@' . preg_replace(
+					'@:([\w]+)@',
+					'(?P<$1>[^/]+)',
+					str_replace(')', ')?', (string) $path)
+				) . '@';
+				$matches = [];
+				
+				if (preg_match($regex, $route, $matches)) {
+					$options = $defaults;
 					foreach ($matches as $key => $value) {
 						if (is_numeric($key)) {
 							continue;
@@ -44,21 +44,21 @@ class Router {
 						}
 					}
 		
-						if (isset($options['controller']) && isset($options['action'])) {
-							$callable = [$options['controller'], $options['action'] . 'Action'];
-							if (is_callable($callable)) {
-								$callable = [new $options['controller'], $options['action'] . 'Action'];
-								$callable($options);
-								return;
-							} else {
-								$this->error();
-							}
+					if (isset($options['controller']) && isset($options['action'])) {
+						$callable = [$options['controller'], $options['action'] . 'Action'];
+						if (is_callable($callable)) {
+							$callable = [new $options['controller'], $options['action'] . 'Action'];
+							$callable($options);
+							return;
 						} else {
 							$this->error();
 						}
+					} else {
+						$this->error();
 					}
 				}
 			}
+		}
 			
 		catch (\Suggestotron\Controller\Exception $e) {
 			$this->error();
@@ -68,6 +68,7 @@ class Router {
 	
 	public function error()
 	{
+
 		if (isset($this->config['errors'])) {
 			$route = $this->config['errors'];
 			$this->start($route);
