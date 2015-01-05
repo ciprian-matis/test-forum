@@ -6,43 +6,25 @@ function showTree2($data, $level,$topic_id) {
 
 		foreach ($data as $item) {  
 		
-			if ($item['id_comment'] == 0) {
-				$id = $item['id'];
-				$id_comment = $item['id_comment'];
-				$author =  $item['author'];
-				$content =  $item['content'];
-				
-			} else if ($item['id_comment'] != 0  ) {
 				$id = $item['id'];
 				$id_comment = $item['id_comment'];
 				$author =  str_repeat(' - ', $level) . $item['author'];   
 				$content =  $item['content'];   
-			} else {
-				$id = $item['id'];
-				$id_comment = $item['id_comment'];
-				$author = str_repeat(' - ', $level). $item['author'];
-				$content = str_repeat(' - ', $level). $item['content'];
-			}
 
-			global $result;
-
-			$result[] = array(
-				'row1' 	=> '<div id=reply_'.$id.$id_comment.'>',
-				'row2'	=> $author . ' reply: ' . $content . '',
-				'row3'	=> '<button type="button" id="comments_' . $id.$id_comment. '" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-comment" class="show_hide"></span> Add reply</button>',
-				'row4'	=> '<input type = "hidden" id="comments_comments_'.$id.$id_comment.'" name="id_comment_'.$id_comment.'" value='.$id_comment.'>',
-				'row5'	=> '<input type = "hidden" id="parent_comments_'.$id.$id_comment.'" name="id_parent_'.$id.'" value='.$id.'>',
-				'row6'	=> '<input type = "hidden" id="topic_comments_'.$id.$id_comment.'" name="id_topic'.$topic_id.'" value='.$topic_id.'>',
-				'row7'	=> '</div>',
-				'row8'	=>  $id.$id_comment,
-			);
+			echo '<div id=reply_'.$id.$id_comment.'></br>';
+			echo $author . ' reply: ' . $content . '';
+			echo '<button type="button" id="comments_' . $id.$id_comment. '" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-comment" class="show_hide"></span> Add reply</button>';
+			echo '<input type = "hidden" id="comments_comments_'.$id.$id_comment.'" name="id_comment_'.$id_comment.'" value='.$id_comment.'>';
+			echo '<input type = "hidden" id="parent_comments_'.$id.$id_comment.'" name="id_parent_'.$id.'" value='.$id.'>';
+			echo '<input type = "hidden" id="topic_comments_'.$id.$id_comment.'" name="id_topic'.$topic_id.'" value='.$topic_id.'>';
+			echo '</div>';
+			echo '<div id="form_comments_' . $id.$id_comment . '" style="width:500px"></div>';
+			
 			
 			if (isset($item['children'])) {                    
 				showTree2($item['children'], $level + 1, $topic_id );
 			} 
-		
         }
-	return $result;        
 }
 
 foreach ($topics as $topic) {
@@ -73,7 +55,7 @@ foreach ($topics as $topic) {
 			<button type="button" id="form_<?php echo $topic['id']; ?>" class="btn btn-default btn-s"><span class="glyphicon glyphicon-comment" class="show_hide"></span> Add comment</button>
 			</br></br>
 
-			<div id="comment_form_<?php echo $topic['id']; ?>" style="width:500px">
+			<div id="comment_form_<?php echo $topic['id']; ?>" style="width:500px;">
 			</div>
 
 		</div>	
@@ -88,23 +70,8 @@ foreach ($topics as $topic) {
 			<fieldset class="alert alert-success" style="width:800px" >
 			<legend style="margin-bottom:10px; font-size:16px;">Comments</legend>
 
-			<?php $results = showTree2($topic['comments'], $level =0, $topic['id']);
-			
-			foreach ($results as $rezultat) {
-				echo $rezultat['row1']. '</br>';
-				echo $rezultat['row2'];
-				echo $rezultat['row3'];
-				echo $rezultat['row4'];
-				echo $rezultat['row5'];
-				echo $rezultat['row6'];
-				echo $rezultat['row7'];
-				
-				?>	<div id="form_comments_<?php echo $rezultat['row8']; ?>" style="width:500px"></div>
-			
-			<?php
-			}
-			unset($GLOBALS['result']);
-			?>
+			<?php $results = showTree2($topic['comments'], $level =0, $topic['id']); ?>
+
 			</fieldset>
 			
 		
@@ -124,181 +91,97 @@ foreach ($topics as $topic) {
 
 
 <!---  comments --->
+
+
 <script type="text/javascript">
 $("[id^='form_']").on("click", function() {
-	// alert(this.id);
-	if ($("#myForm_"+this.id).length === 0){
-
-		var elem = document.getElementById("comment_"+this.id);
-		
-			my_form=document.createElement('FORM');
-			my_form.name='myForm_'+this.id;
-			my_form.id='myForm_'+this.id;
-			my_form.method='POST';
-			my_form.action='/addCommenttoDB';
-
-			my_tb=document.createElement('INPUT');
-			my_tb.setAttribute("class", "form-control");
-			my_tb.setAttribute("width", "200px");
-			my_tb.type='TEXT';
-			my_tb.name='name';
-
-			var namelabel = document.createElement('label'); // Create Label for Name Field
-			namelabel.setAttribute("class","col-sm-2 control-label");
-			namelabel.innerHTML = "Name : "; // Set Field Labels
-
-			my_form.appendChild(namelabel);
-			my_form.appendChild(my_tb);
-
-			var linebreak = document.createElement('br');
-			my_form.appendChild(linebreak);
-
-
-			var namelabel2 = document.createElement('label'); // Create Label for Name Field
-			namelabel2.setAttribute("class","col-sm-2 control-label");
-			namelabel2.innerHTML = "Comment: "; // Set Field Labels
-
-			my_tb2=document.createElement('textarea');;
-			my_tb2.setAttribute("name", "comment");
-			my_tb2.setAttribute("rows", "3");
-			my_tb2.setAttribute("cols", "60");
-
-			my_form.appendChild(namelabel2);
-			my_form.appendChild(my_tb2);
-			
-			
-			my_tb3=document.createElement('INPUT');
-			my_tb3.setAttribute("type", "hidden");
-			my_tb3.name = 'id_parrent';
-			my_tb3.value = 0;			
-			
-			my_tb4=document.createElement('INPUT');
-			my_tb4.setAttribute("type", "hidden");
-			my_tb4.name = 'id_comment';
-			my_tb4.value = 0;			
-			
-			my_tb5=document.createElement('INPUT');
-			my_tb5.setAttribute("type", "hidden");
-			my_tb5.name = 'id_topic';
-			my_tb5.value = (this.id).substr(5);
-			
-			my_tb6=document.createElement('INPUT');
-			my_tb6.setAttribute("type", "hidden");
-			my_tb6.name = 'date';
-			my_tb6.value = '<?php echo $today = date("Y-m-d");?>';
-
-			my_form.appendChild(my_tb3);
-			my_form.appendChild(my_tb4);
-			my_form.appendChild(my_tb5);
-			my_form.appendChild(my_tb6);
-			
-			var submitelement = document.createElement('input'); // Append Submit Button
-			submitelement.setAttribute("type", "submit");
-			submitelement.setAttribute("name", "submit");
-			submitelement.setAttribute("value", "Send");
-			submitelement.setAttribute("class", "btn btn-default btn-s");
-			my_form.appendChild(submitelement);
-
-			document.getElementById("comment_"+this.id).appendChild(my_form);
-
-	} else {
-		$("#comment_"+this.id).slideToggle();
-	};
-
-	
+	createForm(this.id, "comment_"+this.id, (this.id).substr(5), 0);
 });
-</script>
-
-<script type="text/javascript">
 $("[id^='comments_']").on("click", function() {
 
-	// alert(this.id);
+	createForm(this.id, "form_"+this.id, document.getElementById('topic_'+this.id).value, document.getElementById('topic_'+this.id).value );
+});
+</script>
+
+
+
+<script type="text/javascript">
+
+	function createForm(id, nume, value_id, value) {
+
 	
-	if ($("#myForm_"+this.id).length === 0){
+	if ($("#myForm_"+id).length === 0){
 
-		var elem = document.getElementById("form_"+this.id);
+		my_form=document.createElement('FORM');
+		my_form.setAttribute("name","myForm_"+id);
+		my_form.setAttribute("id","myForm_"+id);
+		my_form.setAttribute("method","POST");
+		my_form.setAttribute("action","/addCommenttoDB");
+
+		my_tb=document.createElement('INPUT');
+		my_tb.setAttribute("class", "form-control");
+		my_tb.setAttribute("width", "200px");
+		my_tb.setAttribute("type", "TEXT");
+		my_tb.setAttribute("name", "name");
+
+		my_tb_label = document.createElement('label'); // Create Label for Name Field
+		my_tb_label.setAttribute("class","col-sm-2 control-label");
+		my_tb_label.innerHTML = 'Name: ';
+
+		my_form.appendChild(my_tb_label);
+		my_form.appendChild(my_tb);
+
+		linebreak = document.createElement('br');
+		my_form.appendChild(linebreak);
+
+		my_tb_label2 = document.createElement('label'); // Create Label for Name Field
+		my_tb_label2.setAttribute("class","col-sm-2 control-label");
+		my_tb_label2.innerHTML = 'Comment: ';
 		
-			my_form=document.createElement('FORM');
-			my_form.name='myForm_'+this.id;
-			my_form.id='myForm_'+this.id;
-			my_form.method='POST';
-			my_form.action='/addCommenttoDB';
+		my_tb2=document.createElement('textarea');;
+		my_tb2.setAttribute("name", "comment");
+		my_tb2.setAttribute("rows", "3");
+		my_tb2.setAttribute("cols", "60");
 
-			my_tb=document.createElement('INPUT');
-			my_tb.setAttribute("class", "form-control");
-			my_tb.setAttribute("width", "200px");
-			my_tb.type='TEXT';
-			my_tb.name='name';
+		my_form.appendChild(my_tb_label2);
+		my_form.appendChild(my_tb2);
 
-			var namelabel = document.createElement('label'); // Create Label for Name Field
-			namelabel.setAttribute("class","col-sm-2 control-label");
-			namelabel.innerHTML = "Name : "; // Set Field Labels
+		my_tb3=document.createElement('INPUT');
+		my_tb3.setAttribute("type", "hidden");
+		my_tb3.setAttribute("name", "id_parrent");
+		my_tb3.setAttribute("value", value);
 
-			my_form.appendChild(namelabel);
-			my_form.appendChild(my_tb);
+		my_tb4=document.createElement('INPUT');
+		my_tb4.setAttribute("type", "hidden");
+		my_tb4.setAttribute("name", "id_comment");
+		my_tb4.setAttribute("value", value);
 
-			var linebreak = document.createElement('br');
-			my_form.appendChild(linebreak);
+		my_tb5=document.createElement('INPUT');
+		my_tb5.setAttribute("type", "hidden");
+		my_tb5.setAttribute("name", "id_topic");
+		my_tb5.setAttribute("value", value_id);
+		
+		my_form.appendChild(my_tb3);
+		my_form.appendChild(my_tb4);
+		my_form.appendChild(my_tb5);
+		
+		submitelement = document.createElement('input'); // Append Submit Button
+		submitelement.setAttribute("type", "submit");
+		submitelement.setAttribute("name", "submit");
+		submitelement.setAttribute("value", "Send");
+		submitelement.setAttribute("class", "btn btn-default btn-s");
+		my_form.appendChild(submitelement);
 
+		document.getElementById(nume).appendChild(my_form);
+		$("#"+nume).show();
 
-			var namelabel2 = document.createElement('label'); // Create Label for Name Field
-			namelabel2.setAttribute("class","col-sm-2 control-label");
-			namelabel2.innerHTML = "Comment: "; // Set Field Labels
-
-			my_tb2=document.createElement('textarea');;
-			my_tb2.setAttribute("name", "comment");
-			my_tb2.setAttribute("rows", "3");
-			my_tb2.setAttribute("cols", "60");
-
-			my_form.appendChild(namelabel2);
-			my_form.appendChild(my_tb2);
-
-			my_tb3=document.createElement('INPUT');
-			my_tb3.setAttribute("type", "hidden");
-			my_tb3.name = 'id_parrent';
-			my_tb3.value = document.getElementById('comments_'+this.id).value;
-			
-			my_tb4=document.createElement('INPUT');
-			my_tb4.setAttribute("type", "hidden");
-			my_tb4.name = 'id_comment';
-			my_tb4.value = document.getElementById('parent_'+this.id).value;
-
-			my_tb5=document.createElement('INPUT');
-			my_tb5.setAttribute("type", "hidden");
-			my_tb5.name = 'id_topic';
-			my_tb5.value = document.getElementById('topic_'+this.id).value;
-
-			my_tb6=document.createElement('INPUT');
-			my_tb6.setAttribute("type", "hidden");
-			my_tb6.name = 'date';
-			my_tb6.value = '<?php echo $today = date("Y-m-d");?>';
-			
-			my_form.appendChild(my_tb3);
-			my_form.appendChild(my_tb4);
-			my_form.appendChild(my_tb5);
-			my_form.appendChild(my_tb6);
-			
-			document.getElementById('comments_'+this.id).value
-			
-			var submitelement = document.createElement('input'); // Append Submit Button
-			submitelement.setAttribute("type", "submit");
-			submitelement.setAttribute("name", "submit");
-			submitelement.setAttribute("value", "Send");
-			submitelement.setAttribute("class", "btn btn-default btn-s");
-			my_form.appendChild(submitelement);
-
-			document.getElementById("form_"+this.id).appendChild(my_form);
-			
-	// alert(document.getElementById('comments_'+this.id).value);
 	} else {
-		$("#form_"+this.id).slideToggle();
+		$("#"+nume).slideToggle();
 	};
 
 	
-});
-
+};
 
 </script>
-
 
 	

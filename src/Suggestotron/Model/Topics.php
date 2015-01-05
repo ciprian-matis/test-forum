@@ -65,7 +65,6 @@ class Topics {
 		];
 
 		$query = \Suggestotron\Db::getInstance()->prepare($sql);
-		// echo json_encode($message = 'test json !');
 		return $query->execute($data);
 		
 	}
@@ -147,7 +146,7 @@ class Topics {
 			':id_comment'	=> $id_post_comment,
 			':content' 		=> $data['comment'],
 			':author'		=> $data['name'],
-			':date'			=> $data['date']
+			':date'			=> date("Y-m-d")
 		];
 
 		$query->execute($data);

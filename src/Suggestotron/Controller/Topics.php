@@ -32,41 +32,72 @@ class Topics extends \Suggestotron\Controller {
 			foreach ($comments as $comm){
 				$comm_array[] = array(
 				'id'			=> $comm['id'], 
-				// 'id_topic'		=> $comm['id_topic'], 
+				'id_topic'		=> $comm['id_topic'], 
 				'id_comment'	=> $comm['id_comment'], 
 				'content'		=> $comm['content'], 
 				'author'		=> $comm['author'], 
 				'date'			=> $comm['date']
 				);
 			}
-
+			
 			$tree = $this->buildTree($comm_array, 0);
+			
 			$data[$i]['comments'] = $tree;
 			$i++;
+
 		}
 		
-
 		$this->template->render("/views/index/list.phtml", ['topics' => $data]);
     }
 	
 	function buildTree($elements, $id) {
+		// echo 'Level 1 pentru id: ' . $id . '</br>';
 		
 		$branch = array();
-		foreach ($elements as $element) {
-
+		foreach ($elements as $key => &$element) {
+		
 			if ($element['id_comment'] == $id )  {
-			
+				
 				$children = $this->buildTree($elements, $element['id']);
 				if ($children) {
 					$element['children'] = $children;
 				}
 				$branch[] = $element;
 			}
-			unset($elements[key($elements)]);
+
+			unset($elements[$key]);
+			$elements = array_merge($elements);			
 		}
 	return $branch;
 	}
 
+	function buildTree2($elements, $id) {
+	
+		$branch = array();
+		
+		for($i = 0; $i < count($elements); $i++) {
+		// echo 'Element: ' .$elements[$i]['id']. ' i este: ' . $i. '</br>';
+			if ($elements[$i]['id_comment'] == $id){
+							
+				$children = $this->buildTree2($elements,$elements[$i]['id']);
+				
+				if ($children) {
+					$elements[$i]['children'] = $children;
+				}
+				$branch[] = $elements[$i];
+			
+				// unset($elements[$i]);
+				// $elements = array_merge($elements);
+			}
+			unset($elements[$i]);
+			$elements = array_merge($elements);
+			$i--;
+			// echo 'elemente ramase: </br>';
+			// echo 'Inregistrari: ' . count($elements) . '</br>';
+		}
+	return $branch;
+	}
+		
 	
     public function addAction() {
 		if (isset($_POST) && sizeof($_POST) > 0) {
@@ -145,9 +176,6 @@ class Topics extends \Suggestotron\Controller {
 	
 	public function addCommenttoDBAction() {
 	
-		// echo '<pre>'.print_r($_POST, TRUE).'</pre>';
-		// exit();
-		
 		if (isset($_POST) && sizeof($_POST) > 0) {
 		
 			if (!empty($_POST['name']) && !empty($_POST['comment'])) {
@@ -162,34 +190,6 @@ class Topics extends \Suggestotron\Controller {
 					header("Location: /");
 					exit;
 				}
-			}
-		}
-	}
-
-	public function addReplyAction() {
-
-		$topic = $this->data->getTopic($_GET['id']);
-		$topic['comment'] = $this->data->getComment($_GET['id'],$_GET['commentid']);
-		$this->template->render("/views/index/addReply.phtml", ['topic' => $topic]);
-	}
-	
-	public function addReplytoDBAction() {
-	
-		if (isset($_POST) && sizeof($_POST) > 0) {
-		
-			if (!empty($_POST['name']) && !empty($_POST['comment'])) {
-			
-				$count = $this->data->addComment($_POST, $_POST['id_comment']);
-
-				if ($count ==0 ){
-					$this->template->render("views/errors/index.phtml", ['message' => 'Eroare la accesare bazei de date']);
-					exit;
-				} else { 
-					header("Location: /?comment=yes");
-					exit;
-				}
-			} else {
-				$this->addCommentAction();
 			}
 		}
 	}
